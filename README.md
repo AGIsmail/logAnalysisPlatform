@@ -8,7 +8,7 @@ It is composed of the following 5 (or 6) services:
  - Apache HBase: Persistence
  - Apache Hadoop HDFS & YARN: Supporting Flink and HBase
  - Apache Phoenix: For Zeppelin to have an SQL interpreter for HBase
- - Apache Zeppelin/Project Jypiter: Notebooks
+ - Apache Zeppelin: Notebook
 
 This project applies the above services using a mixture of docker containers and VMs.
 
@@ -186,7 +186,7 @@ docker run -d -p 8089:8080 -p 7077:7077 -p 4040:4040 epahomov/docker-zeppelin
 ```
 
 Access the Zeppelin UI via port 8089.
-Configure the jdbc phoenix interpreter by setting these three values. Replace the IP for ZooKeeper and the hbase parent node appropriately.
+Configure the jdbc phoenix interpreter by setting these three values. Replace the IP for ZooKeeper and the hbase parent node appropriately. 
 ```
 phoenix.url 	jdbc:phoenix:128.130.56.90:2181:/hbase
 phoenix.user 	phoenixuser
@@ -205,10 +205,4 @@ You can now query the table using SQL:
 %jdbc(phoenix)
 SELECT * FROM "messagesFromKafka"
 ```
-
-# Jupyter
-Nothing special required beyond the required steps under Jupyter's [install instructions](http://jupyter.org/install.html)
-
-
-
 
