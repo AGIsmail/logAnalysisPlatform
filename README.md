@@ -169,6 +169,15 @@ mvn clean package
 Upload the compiled JAR under the target folder to the Flink UI accessible via port 8081.
 Choose "Submit New Job", select the uploaded JAR file, set the Entry Class variable to "com.example.streaming.jobs.FlinkConsumer" and start the application by hitting the green "Submit" button.
 
+Alternatively, you could use a YARN cluster for the application:
+Start a Yarn cluster with 5 containers at 1GB per container
+```sh
+user@VM:~/flink-1.3.0/bin# ./yarn-session.sh -n 5 -tm 1024
+```
+Start the application:
+```sh
+user@VM:~/flink-1.3.0/bin# ./flink run -c com.example.streaming.jobs.FlinkConsumer FlinkConsumer-1.0-SNAPSHOT-jar-with-dependencies.jar 
+```
 # Apache Zeppelin
 The Zeppelin service uses [this docker image](https://hub.docker.com/r/epahomov/docker-zeppelin/) (github [link](https://github.com/epahomov/docker-zeppelin)).
 ```sh
