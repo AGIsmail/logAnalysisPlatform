@@ -11,8 +11,8 @@ It is composed of the following 5 (or 6) services:
 This project applies the above services using a mixture of docker containers and VMs.
 # Apache NiFi
 The Apache NiFi service uses the mkobit/nifi docker image:
- - [Github link](url=https://github.com/mkobit/docker-nifi)
- - [Docker hub link](url=https://hub.docker.com/r/mkobit/nifi/)
+ - [Github link](https://github.com/mkobit/docker-nifi)
+ - [Docker hub link](https://hub.docker.com/r/mkobit/nifi/)
 
 You can pull the image and run it using the commands bellow. 
 You will need to expose port 8080 for NiFi's UI and another port (in this example port 20100) for NiFi's syslog listening processor. 
@@ -33,7 +33,29 @@ The template contains:
  
 The PutHbaseJSON processor is optional and will need a HBase client controller configured to point to HBase's ZooKeeper quorum to function.
 
+You will need to update the processors with the appropriate IP's and port numbers. e.g., the PublishKafka processor's broker IP and port setting.
+
 References:
- - [Hortonworks Tutorial](url=https://hortonworks.com/hadoop-tutorial/how-to-refine-and-visualize-server-log-data/)
- - [Bryan Bende's blog post: Getting Syslog Events to HBase](url=https://blogs.apache.org/nifi/entry/storing_syslog_events_in_hbase)
- 
+ - [Hortonworks Tutorial](https://hortonworks.com/hadoop-tutorial/how-to-refine-and-visualize-server-log-data/)
+ - [Bryan Bende's blog post: Getting Syslog Events to HBase](https://blogs.apache.org/nifi/entry/storing_syslog_events_in_hbase)
+
+# Apache ZooKeeper
+
+Since several services from here on out will depend on a functioning ZooKeeper ensemble, it is a good idea to setup ZooKeeper now before proceeding with the other services.
+
+
+
+# Apache Kafka 
+The Apache Kafka service is based on the wurstmeister/kafka image. The github page is [here](https://github.com/wurstmeister/kafka-docker).
+This repo modifies wurstmeister's docker compose file to use an external ZooKeeper service instead of the bundled wurstmeister/zookeeper image.
+
+Before running Kafka, update the IP addresses, ports and topics in the docker-compose-single-broker.yml and/or docker-compose.yml files.
+
+Issue this command to docker-compose to run a single broker:
+```
+user@VM# docker-compose -f docker-compose-single-broker.yml up -d
+```
+
+Now is a good time to test your 
+
+
