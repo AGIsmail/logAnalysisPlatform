@@ -193,6 +193,19 @@ phoenix.user 	phoenixuser
 psql.driver 	org.postgresql.Driver 
 ```
 
+Upload the JSON file LapLogAnalysis.json from the Zeppelin folder to Apache Zeppelin.
+This notebook creates a view for the existing hbase table "messagesFromKafka" that was created by Flink.
+```
+%jdbc(phoenix)
+CREATE VIEW "messagesFromKafka" (k VARCHAR primary key, "msg"."java" VARCHAR)
+```
+
+You can now query the table using SQL:
+```
+%jdbc(phoenix)
+SELECT * FROM "messagesFromKafka"
+```
+
 # Jupyter
 Nothing special required beyond the required steps under Jupyter's [install instructions](http://jupyter.org/install.html)
 
