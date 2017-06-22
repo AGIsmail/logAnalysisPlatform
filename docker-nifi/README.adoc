@@ -1,0 +1,205 @@
+= Docker Apache NiFi
+Mike Kobit <https://github.com/mkobit[@mkobit]
+:toc: preamble
+:uri-github: https://github.com/mkobit/docker-nifi
+:uri-github-issues: {uri-github}/issues
+:uri-imagelayers: https://imagelayers.io
+:uri-travis-ci: https://travis-ci.org/mkobit/docker-nifi
+:uri-docker-hub: https://hub.docker.com/r/mkobit/nifi
+:uri-imagelayers-badge: https://badge.imagelayers.io/mkobit/nifi
+:uri-nifi: https://nifi.apache.org
+:uri-nifi-docs: {uri-nifi}/docs/nifi-docs
+:uri-nifi-docs-dev-guide: {uri-nifi-docs}
+:uri-nifi-jira: https://issues.apache.org/jira/browse/NIFI
+:uri-nifi-mailing-lists: {uri-nifi}/mailing_lists.html
+:uri-github-nifi: https://github.com/apache/nifi
+:uri-shields: https://img.shields.io
+:uri-shields-mit: {uri-shields}/badge/license-MIT-blue.svg
+:uri-shields-docker-stars: {uri-shields}/docker/stars/mkobit/nifi.svg
+:uri-shields-docker-pulls: {uri-shields}/docker/pulls/mkobit/nifi.svg
+:uri-shields-github-issues: {uri-shields}/github/issues/mkobit/docker-nifi.svg
+
+image:{uri-shields-mit}[title="MIT license", alt="MIT License"]
+image:https://travis-ci.org/mkobit/docker-nifi.svg?branch=master[title="Build Status", alt="Build Status", link="https://travis-ci.org/mkobit/docker-nifi"]
+image:{uri-shields-docker-stars}[title="Docker repository stars", alt="Stars on Docker Hub", link="https://hub.docker.com/r/mkobit/nifi/"]
+image:{uri-shields-docker-pulls}[title="Docker image pulls", alt="Docker image pulls", link="https://hub.docker.com/r/mkobit/nifi/"]
+image:{uri-shields-github-issues}[title="Github issues", alt="Github issues", link="https://github.com/mkobit/docker-nifi/issues"]
+
+This is an unofficial link:ttps://nifi.apache.org/[Apache NiFi] Docker image.
+The images are built by link:{uri-travis-ci}[Travis CI] and are available on link:{uri-docker-hub}[Docker Hub at mkobit/nifi].
+
+== Images
+
+[cols=2, options="header"]
+|===
+| Image
+| Image Size (by link:{uri-imagelayers}[imagelayers.io])
+
+| `mkobit/nifi:latest`
+| image:{uri-imagelayers-badge}:latest.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:latest"]
+
+| `mkobit/nifi:1.1.1-openjdk-8`
+| image:{uri-imagelayers-badge}:1.1.1-openjdk-8.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:1.1.1-openjdk-8"]
+
+| `mkobit/nifi:1.1.1-oracle-java8`
+| image:{uri-imagelayers-badge}:1.1.1-oracle-java8.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:1.1.1-oracle-java8"]
+
+| `mkobit/nifi:0.7.1-openjdk-8`
+| image:{uri-imagelayers-badge}:0.7.1-openjdk-8.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:0.7.1-openjdk-8"]
+
+| `mkobit/nifi:0.7.1-openjdk-7`
+| image:{uri-imagelayers-badge}:0.7.1-openjdk-7.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:0.7.1-openjdk-7"]
+
+| `mkobit/nifi:0.7.1-oracle-java8`
+| image:{uri-imagelayers-badge}:0.7.1-oracle-java8.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:0.7.1-oracle-java8"]
+
+| `mkobit/nifi:0.7.1-oracle-java7`
+| image:{uri-imagelayers-badge}:0.7.1-oracle-java7.svg[title="Image layers and size", alt="Image layers and size",link="{uri-imagelayers}?images=mkobit%2Fnifi:0.7.1-oracle-java7"]
+|===
+
+== Example
+
+To try out NiFi on Docker:
+
+. Pull the `latest` image
++
+[source,console]
+----
+docker pull mkobit/nifi
+----
+
+. Run image and expose the default ports to the host.
++
+[source,console]
+----
+# --rm : remove container on exit
+# -i : interactive
+# -t : allocate TTY
+# -p : publish each container port to host port. format: ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort | containerPort
+docker run -it --rm -p 8080-8081:8080-8081 mkobit/nifi
+----
+
+. Go to default local NiFi endpoint in browser - link:http://localhost:8080/nifi/[http://localhost:8080/nifi/]
+
+== Building Images
+
+=== Requirements
+
+- Docker
+- Python 3.5
+
+=== Building
+
+The main entrypoint for building is the link:make_docker.py[_make_docker.py_] file.
+The Python script makes use of link:https://docs.python.org/3/library/subprocess.html[`subprocess`], link:https://docs.python.org/3/library/string.html#template-strings[`string.Template`], and link:https://docs.python.org/3/howto/argparse.html[`argparse`].
+
+The build is essentially divided into 3 phases, which are all mapped to different subcommands:
+
+. `generate` - generate the Dockerfile to be used
+. `build` - run `docker build` and tags images
+. `push` - Push up images to Docker Hub
+
+For help, simple run the script with the `--help` argument:
+
+[source,console]
+.make_docker.py Help
+----
+./make_docker.py --help
+----
+
+To get subcommand help, you can specify `--help` for that option:
+
+[source,console]
+.make_docker.py Subcommand Help
+----
+./make_docker.py generate --help
+----
+
+You can see the main script uses from the link:.travis.yml[_.travis.yml] file.
+
+==== Build example
+
+Here is an example that would be executed on the CI system:
+
+[source, console]
+.make_docker.py build
+----
+./make_docker.py build \
+    --template-substitutions "base_image=java:8-jre,nifi_version=0.7.0" \
+    --template-file templates/Dockerfile-template \
+    --destination-file 0.7.0-openjdk-8.dockerfile \
+    --repository mkobit/nifi \
+    --tags 0.7.0-openjdk-8,latest
+----
+
+=== Templates
+
+The Dockerfile templates can be found in the link:templates[_templates_] directory.
+
+=== Travis
+
+The Travis build entrypoint is the link:travis_build.sh[_travis_build.sh] script.
+This script determines if it is a pull request, merge into master, or any other branch.
+
+Pull requests are built, while commits to master trigger a build and publish to Docker Hub.
+
+==== Travis utilities
+
+There is a Travis-CI utility Docker image that installs the link:https://rubygems.org/gems/travis[`travis` RubyGem].
+There are a couple utility scripts to build and run that image:
+
+- link:build-travis-docker.sh[_build-travis-docker.sh_] - build the link:Dockerfile-travis[_Dockerfile-travis_] image
+- link:exec-travis-docker.sh[_exec-travis-docker.sh_] - runs the link:Dockerfile-travis[_Dockerfile-travis_] image, with default arguments to lint this repository's _.travis.yml_ file
+
+== Building Extensions
+
+This can easily be used as a base image to create NiFi applications.
+One way would be to build a link:https://nifi.apache.org/docs/nifi-docs/html/developer-guide.html#nars[NAR] with extensions built upon the framework and including it in your own image.
+I recommend reading the link:https://nifi.apache.org/docs/nifi-docs/html/developer-guide.html[Developer's Guide] if you want to head down this route.
+
+== Volumes
+
+These are the default locations as specified by the Apache NiFi properties.
+You can find more information about each of these repositories on the link:https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html[System Administration Guide].
+
+- `$NIFI_HOME/database_repository` - user access and flow controller history
+- `$NIFI_HOME/flowfile_repository` - FlowFile attributes and current state in
+the system
+- `$NIFI_HOME/content_repository` - content for all the FlowFiles in the system
+- `$NIFI_HOME/provenance_repository` - information related to Data Provenance
+
+== Official Apache NiFi Documentation and Guides
+
+- link:https://nifi.apache.org/docs.html[Overview]
+- link:https://nifi.apache.org/docs/nifi-docs/html/user-guide.html[User Guide]
+- link:https://nifi.apache.org/docs/nifi-docs/html/expression-language-guide.html[Expression Language]
+- link:https://nifi.apache.org/quickstart.html[Development Quickstart]
+- link:https://nifi.apache.org/developer-guide.html[Developer's Guide]
+- link:https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html[System Administrator]
+
+== ListenHTTP Processor
+
+The standard library has a built-in processor for an HTTP endpoint listener.
+That processor is named link:https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi.processors.standard.ListenHTTP/index.html[`ListenHTTP`].
+You should set the **Listening Port** of the instantiated processor to `8081` if you follow the instructions from above.
+
+== Usage
+
+This image can either be used as a base image for building on top of NiFi or just to experiment with.
+I personally have not attempted to use this in a production use case.
+
+== Issues
+
+If you have any problems, comments, or questions with this image, feel free to reach out at link:{uri-github}[mkobit/docker-nifi].
+If you have Apache NiFi specific questions or concerns you can reach out on one of the link:{uri-nifi-mailing-lists}[community mailing lists].
+
+== Contributing to this repository
+
+Contributing changes to this repository is extremely welcome.
+If it is a larger change, it is usually best to discuss your plans first.
+Please see the link:{uri-github-issues}[issues] to see if a similar issue already exists.
+
+== Contributing to NiFi
+
+The Apache NiFi source code can be found on Github at link:{uri-github-nifi}[apache/nifi].
+You can browse issues related to the project on the link:{uri-nifi-jira}[Apache NiFi Jira].
