@@ -23,5 +23,17 @@ user@VM:~/ docker run -it -p 8080-8081:8080-8081 -p 20100:20100 mkobit/nifi /bin
 nifi@3261f89ad489:/opt/nifi/bin$ ./nifi.sh start
 ```
 Once you can access the NiFi UI, upload the nifiTemplate.xml file to Nifi.
-The template consists of:
- - 
+The template contains:
+ - Log Generator and Data Enrichment process groups: These process groups create example syslog messages.
+ - ListenSyslog processor: Configured to listen for TCP syslog messages on port 20100.
+ - UpdateAttribute processor: Creates a row id for HBase and renames attributes
+ - AttributesToJSON processor: Creates a JSON doc from the attributes 
+ - PutHBaseJSON processor: Persists the JSON doc in HBase
+ - PublishKafka processor: Publishes the JSON doc as a message on Kafka
+ 
+The PutHbaseJSON processor is optional and will need a HBase client controller configured to point to HBase's ZooKeeper quorum to function.
+
+References:
+ - [Hortonworks Tutorial](url=https://hortonworks.com/hadoop-tutorial/how-to-refine-and-visualize-server-log-data/)
+ - [Bryan Bende's blog post: Getting Syslog Events to HBase](url=https://blogs.apache.org/nifi/entry/storing_syslog_events_in_hbase)
+ 
